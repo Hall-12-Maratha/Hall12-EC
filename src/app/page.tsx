@@ -29,12 +29,12 @@ export default function LoginPage() {
         <LoginForm />
         </div>
 
-        <div className="text-center text-sm">
+        {/* <div className="text-center text-sm">
           {"Don't have an account? "}
           <Link href="/signup" className={cn(buttonVariants({ variant: "link" }), "p-0 h-auto")}>
             Sign Up
           </Link>
-        </div>
+        </div> */}
       </div>
     </main>
   );
