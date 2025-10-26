@@ -1,0 +1,147 @@
+
+{
+    "entities": {
+        "user": {
+            "title": "User",
+            "description": "A user of the application.",
+            "type": "object",
+            "properties": {
+                "uid": {
+                    "type": "string",
+                    "description": "The user's unique ID."
+                },
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "The user's email address."
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "admin",
+                        "user"
+                    ],
+                    "description": "The user's role, managed via Firebase Auth Custom Claims."
+                },
+                "hasVoted": {
+                    "type": "boolean",
+                    "description": "Whether the user has voted."
+                }
+            },
+            "required": [
+                "uid",
+                "email",
+                "role",
+                "hasVoted"
+            ]
+        },
+        "position": {
+            "title": "Position",
+            "description": "An electoral position.",
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The title of the position."
+                }
+            },
+            "required": [
+                "title"
+            ]
+        },
+        "candidate": {
+            "title": "Candidate",
+            "description": "A candidate for a position.",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The candidate's name."
+                },
+                "positionId": {
+                    "type": "string",
+                    "description": "The ID of the position the candidate is running for."
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the candidate's image."
+                }
+            },
+            "required": [
+                "name",
+                "positionId",
+                "imageUrl"
+            ]
+        },
+        "vote": {
+            "title": "Vote",
+            "description": "A user's vote.",
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "description": "The ID of the user who voted."
+                },
+                "positionId": {
+                    "type": "string",
+                    "description": "The ID of the position voted for."
+                },
+                "preferences": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "An ordered list of candidate IDs."
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The timestamp of when the vote was cast."
+                }
+            },
+            "required": [
+                "userId",
+                "positionId",
+                "preferences",
+                "createdAt"
+            ]
+        }
+    },
+    "auth": {
+        "providers": [
+            "email_password"
+        ],
+        "customClaims": {
+            "admin": {
+                "type": "boolean"
+            }
+        }
+    },
+    "firestore": {
+        "/users/{userId}": {
+            "schema": {
+                "$ref": "#/entities/user"
+            },
+            "description": "Stores user profile information."
+        },
+        "/positions/{positionId}": {
+            "schema": {
+                "$ref": "#/entities/position"
+            },
+            "description": "Stores electoral positions."
+        },
+        "/candidates/{candidateId}": {
+            "schema": {
+                "$ref": "#/entities/candidate"
+            },
+            "description": "Stores candidate information."
+        },
+        "/votes/{voteId}": {
+            "schema": {
+                "$ref": "#/entities/vote"
+            },
+            "description": "Stores individual user votes."
+        }
+    }
+}
