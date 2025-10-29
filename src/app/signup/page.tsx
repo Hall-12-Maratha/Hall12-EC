@@ -16,7 +16,7 @@ export default function SignupPage() {
                 </h1>
             </div>
           <p className="text-muted-foreground">
-            Join VoteChain to cast your vote securely.
+            Join the Hall12 Election Portal to cast your vote securely.
           </p>
         </div>
         <SignupForm />

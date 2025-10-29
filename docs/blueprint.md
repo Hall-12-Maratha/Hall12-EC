@@ -1,4 +1,4 @@
-# **App Name**: VoteChain
+# **App Name**: Hall12 Election Portal
 
 ## Core Features:
 

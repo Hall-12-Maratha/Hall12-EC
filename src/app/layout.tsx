@@ -5,8 +5,8 @@ import { AuthProvider } from '@/lib/hooks/use-auth';
 import { FirebaseErrorListener } from '@/components/firebase-error-listener';
 
 export const metadata: Metadata = {
-  title: 'VoteChain',
-  description: 'A secure and transparent voting application.',
+  title: 'Election App - Hall 12',
+  description: 'A secure and transparent voting application for Hall 12.',
 };
 
 export default function RootLayout({
