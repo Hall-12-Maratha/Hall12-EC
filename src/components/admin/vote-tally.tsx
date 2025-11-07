@@ -14,24 +14,22 @@ interface VoteTallyProps {
   loading: boolean;
 }
 
-// Borda Count implementation: if there are N candidates, a 1st preference vote gets N points,
-// 2nd gets N-1, and so on. A last place vote gets 1 point.
+// Plurality implementation: each submitted vote gives exactly 1 vote to the selected candidate.
+// For single-choice polls we expect vote.preferences to be an array with a single candidate ID.
 function calculateBordaScores(votes: Vote[], positionId: string, candidateIds: string[]) {
-    const scores: Record<string, number> = {};
-    const numCandidates = candidateIds.length;
-    candidateIds.forEach(id => scores[id] = 0);
+  const scores: Record<string, number> = {};
+  candidateIds.forEach(id => scores[id] = 0);
 
-    const positionVotes = votes.filter(v => v.positionId === positionId);
+  const positionVotes = votes.filter(v => v.positionId === positionId);
 
-    positionVotes.forEach(vote => {
-        vote.preferences.forEach((candidateId, index) => {
-            if (scores[candidateId] !== undefined) {
-                scores[candidateId] += (numCandidates - index);
-            }
-        });
-    });
+  positionVotes.forEach(vote => {
+    const firstPref = vote.preferences[0];
+    if (firstPref && scores[firstPref] !== undefined) {
+      scores[firstPref] += 1; // one vote per submission
+    }
+  });
 
-    return scores;
+  return scores;
 }
 
 
@@ -46,12 +44,12 @@ export function VoteTally({ positions, votes, loading }: VoteTallyProps) {
             score: scores[candidate.id] || 0,
         })).sort((a, b) => b.score - a.score);
 
-        const chartConfig = {
-            score: {
-                label: "Score",
-                color: "hsl(var(--primary))",
-            }
-        } satisfies ChartConfig;
+    const chartConfig = {
+      score: {
+        label: "Votes",
+        color: "hsl(var(--primary))",
+      }
+    } satisfies ChartConfig;
 
 
         return {
@@ -97,7 +95,7 @@ export function VoteTally({ positions, votes, loading }: VoteTallyProps) {
         <Card key={positionData.id}>
           <CardHeader>
             <CardTitle>{positionData.title}</CardTitle>
-            <CardDescription>Results based on Borda Count method.</CardDescription>
+            <CardDescription>Results based on plurality (one vote per submission).</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={positionData.chartConfig} className="min-h-[300px] w-full">

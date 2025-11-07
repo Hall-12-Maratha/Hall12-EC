@@ -4,8 +4,7 @@ import type { Position } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import { ArrowDown, ArrowUp } from "lucide-react";
+// UI button and arrow controls removed — single-choice radio UI used instead
 
 interface PositionVotingCardProps {
     position: Position;
@@ -13,24 +12,18 @@ interface PositionVotingCardProps {
 }
 
 export function PositionVotingCard({ position, onPreferenceChange }: PositionVotingCardProps) {
-    const [rankedCandidates, setRankedCandidates] = useState(position.candidates);
+    // For single-choice polling we'll store the selected candidate ID
+    const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
 
     useEffect(() => {
-        onPreferenceChange(position.id, rankedCandidates.map(c => c.id));
-    }, [rankedCandidates, position.id, onPreferenceChange]);
-
-    const moveCandidate = (index: number, direction: 'up' | 'down') => {
-        if (direction === 'up' && index === 0) return;
-        if (direction === 'down' && index === rankedCandidates.length - 1) return;
-        
-        const newIndex = direction === 'up' ? index - 1 : index + 1;
-        const newRankedCandidates = [...rankedCandidates];
-        const temp = newRankedCandidates[index];
-        newRankedCandidates[index] = newRankedCandidates[newIndex];
-        newRankedCandidates[newIndex] = temp;
-        
-        setRankedCandidates(newRankedCandidates);
-    };
+        // notify parent when selection changes; keep API-compatible by sending an array
+        if (selectedCandidateId) {
+            onPreferenceChange(position.id, [selectedCandidateId]);
+        } else {
+            // if none selected, send empty array
+            onPreferenceChange(position.id, []);
+        }
+    }, [selectedCandidateId, position.id, onPreferenceChange]);
 
     return (
         <Card>
@@ -38,41 +31,31 @@ export function PositionVotingCard({ position, onPreferenceChange }: PositionVot
                 <CardTitle>{position.title}</CardTitle>
             </CardHeader>
             <CardContent>
-                {rankedCandidates.length > 0 ? (
+                {position.candidates.length > 0 ? (
                     <ul className="space-y-2">
-                        {rankedCandidates.map((candidate, index) => (
+                        {position.candidates.map((candidate) => (
                             <li key={candidate.id} className="flex items-center justify-between gap-4 rounded-md border bg-card p-3 shadow-sm">
-                                <div className="flex items-center gap-4">
-                                    <span className="text-xl font-bold text-primary w-6 text-center">{index + 1}</span>
-                                    <Image 
-                                        src={candidate.imageUrl}
-                                        alt={candidate.name}
-                                        width={90}
-                                        height={90}
-                                        data-ai-hint="person avatar"
+                                <label className="flex items-center gap-4 w-full cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name={`position-${position.id}`}
+                                        value={candidate.id}
+                                        checked={selectedCandidateId === candidate.id}
+                                        onChange={() => setSelectedCandidateId(candidate.id)}
+                                        className="radio mr-2"
+                                        aria-label={`Select ${candidate.name}`}
                                     />
-                                    <p className="font-medium">{candidate.name}</p>
-                                </div>
-                                <div className="flex gap-1">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => moveCandidate(index, 'up')}
-                                        disabled={index === 0}
-                                        aria-label={`Move ${candidate.name} up`}
-                                    >
-                                        <ArrowUp className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => moveCandidate(index, 'down')}
-                                        disabled={index === rankedCandidates.length - 1}
-                                        aria-label={`Move ${candidate.name} down`}
-                                    >
-                                        <ArrowDown className="h-4 w-4" />
-                                    </Button>
-                                </div>
+                                    <div className="flex items-center gap-4">
+                                        <Image 
+                                            src={candidate.imageUrl}
+                                            alt={candidate.name}
+                                            width={90}
+                                            height={90}
+                                            data-ai-hint="person avatar"
+                                        />
+                                        <p className="font-medium">{candidate.name}</p>
+                                    </div>
+                                </label>
                             </li>
                         ))}
                     </ul>

@@ -39,7 +39,7 @@ export default async function UserDashboardPage() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Cast Your Vote</h1>
-                <p className="text-muted-foreground">Rank candidates in order of preference for each position.</p>
+                <p className="text-muted-foreground">Select one candidate for each position.</p>
             </div>
             <VotingForm positions={positions} />
         </div>

@@ -25,3 +25,9 @@ export interface Vote {
   positionId: string;
   preferences: string[]; // Ordered list of candidate IDs
 }
+
+export interface ElectionState {
+  active: boolean;
+  startAt?: string | null;
+  endAt?: string | null;
+}
