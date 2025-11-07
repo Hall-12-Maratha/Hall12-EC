@@ -89,6 +89,23 @@ export async function submitVotes(prevState: any, formData: FormData) {
     }
     
   try {
+    // Check election state before accepting votes
+    try {
+      const electionRef = adminDb.collection('settings').doc('election');
+      const electionSnap = await electionRef.get();
+      if (electionSnap.exists) {
+        const data: any = electionSnap.data();
+        if (!data.active) {
+          return { success: false, message: 'Voting is not active at this time.' };
+        }
+      } else {
+        // If no election doc exists, treat as inactive
+        return { success: false, message: 'Voting is not active at this time.' };
+      }
+    } catch (e) {
+      console.warn('Could not verify election state, proceeding with submission (admin SDK read failed):', e);
+    }
+
     // Use Admin SDK for server-side writes so security rules don't block server actions.
     const batch = adminDb.batch();
 
@@ -128,6 +145,38 @@ export async function submitVotes(prevState: any, formData: FormData) {
   } catch (error: any) {
     console.error("Vote submission failed:", error);
     return { success: false, message: error.message || "An error occurred while submitting your vote. You may not have permission." };
+  }
+}
+
+
+const electionActionSchema = z.object({
+  action: z.enum(["start", "stop"]),
+});
+
+export async function setElectionState(prevState: any, formData: FormData) {
+  const validated = electionActionSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!validated.success) {
+    return { success: false, message: "Invalid action." };
+  }
+
+  const { action } = validated.data;
+
+  try {
+    const electionRef = adminDb.collection('settings').doc('election');
+    if (action === 'start') {
+      await electionRef.set({ active: true, startAt: admin.firestore.FieldValue.serverTimestamp(), endAt: null }, { merge: true });
+    } else {
+      await electionRef.set({ active: false, endAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    }
+
+    // Revalidate pages that depend on election state
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/user/dashboard");
+
+    return { success: true, message: `Election ${action === 'start' ? 'started' : 'stopped'}.` };
+  } catch (error: any) {
+    console.error('setElectionState failed:', error);
+    return { success: false, message: error?.message ?? 'Failed to update election state.' };
   }
 }
 

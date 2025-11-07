@@ -73,7 +73,7 @@ def create_or_get_user(email: str, password: str):
             raise
 
 
-def upsert_user_doc(db, user_record, role='user'):
+def upsert_user_doc(db, user_record, role='admin'):
     uid = user_record.uid
     doc_ref = db.collection('users').document(uid)
     data = {

@@ -100,3 +100,29 @@ export async function getVoteResults() {
         return [];
     }
 }
+
+export async function getElectionState() {
+  try {
+    try {
+      const docRef = adminDb.collection('settings').doc('election');
+      const docSnap = await docRef.get();
+      if (!docSnap.exists) {
+        return { active: false };
+      }
+      const data: any = docSnap.data();
+      const result: { active: boolean; startAt?: string | null; endAt?: string | null } = {
+        active: !!data.active,
+        startAt: data.startAt && typeof data.startAt.toDate === 'function' ? data.startAt.toDate().toISOString() : (data.startAt ?? null),
+        endAt: data.endAt && typeof data.endAt.toDate === 'function' ? data.endAt.toDate().toISOString() : (data.endAt ?? null),
+      };
+      return result;
+    } catch (adminErr) {
+      // If admin SDK not available, fall back to client Firestore (likely not used server-side)
+      console.warn('getElectionState: admin SDK read failed, returning default inactive state', adminErr);
+      return { active: false };
+    }
+  } catch (error) {
+    console.error('Error fetching election state:', error);
+    return { active: false };
+  }
+}

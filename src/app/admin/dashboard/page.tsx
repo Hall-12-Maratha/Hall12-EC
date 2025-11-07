@@ -1,10 +1,11 @@
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
-import { getPositionsWithCandidates, getVoteResults } from "@/lib/data";
+import { getPositionsWithCandidates, getVoteResults, getElectionState } from "@/lib/data";
 
 
 export default async function AdminDashboardPage() {
   const positions = await getPositionsWithCandidates();
   const votes = await getVoteResults();
+  const electionState = await getElectionState();
 
   // We are fetching all data here on the server and passing it to the client component.
   // This follows the pattern of using Server Components for data fetching.
@@ -18,6 +19,7 @@ export default async function AdminDashboardPage() {
         <AdminDashboard 
           positions={positions} 
           initialVotes={votes}
+          initialElectionState={electionState}
         />
     </div>
   );
