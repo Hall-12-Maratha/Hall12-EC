@@ -5,18 +5,31 @@ import type { AppUser, Candidate, Position, Vote } from "./types";
 import "server-only";
 
 const temporaryCandidates: Candidate[] = [
-  { id: "c1", name: "Alice Johnson", positionId: "president", imageUrl: "/image.png" },
-  { id: "c2", name: "Bob Williams", positionId: "president", imageUrl: "https://picsum.photos/seed/2/100/100" },
-  { id: "c3", name: "Charlie Brown", positionId: "mess-secy", imageUrl: "https://picsum.photos/seed/3/100/100" },
-  { id: "c4", name: "Diana Miller", positionId: "mess-secy", imageUrl: "https://picsum.photos/seed/4/100/100" },
-  { id: "c5", name: "Ethan Davis", positionId: "maintenance-secy", imageUrl: "https://picsum.photos/seed/5/100/100" },
-  { id: "c6", name: "Fiona Garcia", positionId: "maintenance-secy", imageUrl: "https://picsum.photos/seed/6/100/100" },
+  { id: "c1", name: "Mudit Srivastava", positionId: "president", imageUrl: "/mudit.jpg" },
+  { id: "c2", name: "NOTA", positionId: "president", imageUrl: "/nota.png" },
+  { id: "c3", name: "Dwij Sukhadiya", positionId: "mess-secy", imageUrl: "/dwij.jpg" },
+  { id: "c4", name: "Utkarsh Aman", positionId: "mess-secy", imageUrl: "/uttkarsh.jpg" },
+  { id: "c5", name: "NOTA", positionId: "mess-secy", imageUrl: "/nota.png" },
+  { id: "c6", name: "Ranjan ojha", positionId: "maintenance-secy", imageUrl: "/ranjhan.jpg" },
+  { id: "c7", name: "Arnab", positionId: "maintenance-secy", imageUrl: "/arnab.jpeg" },
+  { id: "c8", name: "NOTA", positionId: "maintenance-secy", imageUrl: "/nota.png" },
+  { id: "c10", name: "Arpit", positionId: "sports-secy", imageUrl: "/arpit.jpg" },
+  { id: "c9", name: "NOTA", positionId: "sports-secy", imageUrl: "/nota.png" },
+  { id: "c11", name: "Suryans", positionId: "cultural-secy", imageUrl: "/suryansh.jpg" },
+  { id: "c12", name: "Chitrank", positionId: "cultural-secy", imageUrl: "/chitrank.png" },
+  { id: "c13", name: "NOTA", positionId: "cultural-secy", imageUrl: "/nota.png" },
+
+
+
 ];
 
 const temporaryPositions:  Omit<Position, 'candidates'>[] = [
     { id: "president", title: "President" },
     { id: "mess-secy", title: "Mess Secy" },
     { id: "maintenance-secy", title: "Maintenance Secy" },
+    { id: "sports-secy", title: "Sports Secy" },
+    { id: "cultural-secy", title: "Cultural Secy" },
+
 ];
 
 
